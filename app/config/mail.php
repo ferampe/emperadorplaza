@@ -82,7 +82,7 @@ return array(
 	*/
 
   'username' => 'request@latinamericaforless.com',
-  'password' => 'dh663)(kjhs',
+  'password' => '',
 
 	/*
 	|--------------------------------------------------------------------------
