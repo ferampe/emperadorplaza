@@ -1,0 +1,2 @@
+[04-Dec-2014 15:30:48 UTC] PHP Fatal error:  Cannot redeclare class EntrustSetupTables in /home/peruforl/app/backend/app/database/migrations/2014_12_04_153042_entrust_setup_tables.php on line 73
+[04-Dec-2014 15:32:18 UTC] PHP Fatal error:  Cannot redeclare class EntrustSetupTables in /home/peruforl/app/backend/app/database/migrations/2014_12_04_153042_entrust_setup_tables.php on line 73
