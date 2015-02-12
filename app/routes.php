@@ -13,20 +13,82 @@
 
 Route::get('form', function(){
 
-    $query = DB::select("SELECT DATE_FORMAT(date, '%d/%m/%Y') as date_blok FROM dates_block WHERE date >= date('Y-m-d')");
+    $rooms = Room::all();
 
-    $datesBlock = DB::table('dates_block')
-                     ->select(DB::raw('DATE_FORMAT(date, "%d/%m/%Y")'))
-                     ->where('date', '>=', date('Y-m-d'))                     
+    $roomSelect = '<select name="room[]" id="room" class="form-control">';
+    foreach($rooms as $room)
+    {
+        $roomSelect .= '<option value="'.$room->room_id.'" >'.$room->name.'</option>';
+    }
+
+    $roomSelect .= '</select>';
+        
+
+                                    
+
+                             
+
+    $datesBlockQuery = DB::table('dates_block')
+                     ->select(DB::raw('DATE_FORMAT(date, "%d/%m/%Y") as datef, room_id'))
+                     ->where('date', '>=', date('Y-m-d')) 
                      ->get();
 
-    //$datesBlock = DateBlock::where('date', '>=', date('Y-m-d'))->get(array('DATE_FORMAT(date, "%d/%m/%Y")'))->toArray(array('date'));
-    //$datesBlock = DB::select(DB::raw($query));
+    $datesBlockArr = array();
+    foreach ($datesBlockQuery as $dateblock) {
+        $datesBlockArr[] = array($dateblock->datef, $dateblock->room_id);
+    }
 
-    dd($datesBlock);
 
-    return View::make('form_reservation');
+
+    $datesPriceQuery = DB::table('dates_prices')
+                     ->select(DB::raw('DATE_FORMAT(date, "%d/%m/%Y") as datef, room_id, price'))
+                     ->where('date', '>=', date('Y-m-d')) 
+                     ->get();
+
+    $datesPriceArr = array();
+    foreach ($datesPriceQuery as $datePrice) {
+        $datesPriceArr[] = array($datePrice->datef, $datePrice->room_id, $datePrice->price );
+    }
+
+                     //var_dump(DB::getQueryLog());
+
+  
+    //echo "<pre>";
+    //dd($datesBlockArr);
+    //
+    $datos = array('roomSelect' => $roomSelect, 'rooms' => $rooms, 'datesBlocks' => $datesBlockArr, 'datesPrices' => $datesPriceArr);
+
+    return View::make('form_reservation', $datos);
 });
+
+Route::post('datesBlocks', function(){
+
+    $datesBlockQuery = DB::table('dates_block')
+                     ->select(DB::raw('DATE_FORMAT(date, "%d/%m/%Y") as datef, room_id'))
+                     ->where('date', '>=', date('Y-m-d'))
+                     ->where('room_id', '=', $_POST['room'])
+                     ->get();
+
+    return Response::json($datesBlockQuery);
+});
+
+Route::post('getBlockSelect', function(){
+    $rooms = Room::all();
+
+    $roomSelect = '<select name="room[]" id="room-'.$_POST['id'].'" class="form-control">';
+    foreach($rooms as $room)
+    {
+        $roomSelect .= '<option value="'.$room->room_id.'" >'.$room->name.'</option>';
+    }
+
+    $roomSelect .= '</select>';
+
+    return $roomSelect;
+});
+
+
+
+
 
 Route::get('denied', function(){
     return View::make('denied');

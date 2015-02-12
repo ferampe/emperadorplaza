@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,27 +18,112 @@
     {{ HTML::script('front/js/jquery-ui.multidatespicker.js') }}
 
     <script>
+    var retValDatesBlock = null;
+    var idCalendar = 1;
+    var roomSelectHtml = '{{ $roomSelect }}';
+
     $(document).ready(function(){
-        $('#calendar').multiDatesPicker({
-            dateFormat: 'dd/mm/yy',
-            addDisabledDates: ['06/02/2015', '06/03/2015'],
-            minDate: 0,
-            numberOfMonths: [1,2],
-            altField: "#value_calendar" 
-            /*onSelect: function(){
-                alert(this.value);
-            }*/
+
+        instanceMultiDatePicker();
+        
+
+        $(document).on('click',".remove_fields", function(){
+            event.preventDefault();
+            if(confirm("Esta Seguro deeliminar la fecha y el precio??")){
+                $(this).closest(".row").remove();    
+            }                 
         });
 
-        $("#values").bind('click', function(event){
-            event.preventDefault(); 
-            alert($('#calendar').multiDatesPicker('getDates'));
-        })
+        $("#room").bind('change', function(){
+            loadDatesBlock();
+
+            $('#calendar').multiDatesPicker({
+                dateFormat: 'dd/mm/yy',
+                addDisabledDates: retValDatesBlock,
+                minDate: 0,
+                numberOfMonths: [1,2],
+                altField: "#value_calendar" 
+                /*onSelect: function(){
+                    alert(this.value);
+                }*/
+            });
+        });
+
+        $("#add").bind('click', function(){
+            event.preventDefault();
+           
+            idCalendar++;
+
+            $.ajax({
+                type: "post",
+                url: "{{ url('getBlockSelect') }}",
+                data: "id="+idCalendar,
+                async: false,
+                success: function(datos){
+                    roomSelectHtml = datos;
+                }
+            });
+
+            $('#habitaciones').append('<div class="row" id="clone_row"><div class="col-sm-4"><div class="form-group"><label for="">Tipo de Habitacion:</label>'+roomSelectHtml+'</div></div><div class="col-sm-2"><div class="form-group"><label for="">Cant. Hab:</label><input type="text" class="form-control" name="cat_hab[]" id="num_hab"></div></div><div class="col-sm-4"><div class="form-group"><label for="">Fechas:</label><input type="text" class="form-control calendar" name="dates[]" id="calendar-'+idCalendar+'"></div></div><div class="col-sm-2"><label for="">Eliminar</label><a class="btn btn-danger remove_fields"><i class="glyphicon glyphicon-trash"></i></a></div></div>');
+
+
+
+            instanceMultiDatePicker();
+        });
+
     });
+
+    function instanceMultiDatePicker()
+    {
+
+        loadDatesBlock();
+
+        $('.calendar').each(function(){
+            $(this).multiDatesPicker({
+                dateFormat: 'dd/mm/yy',
+                addDisabledDates: retValDatesBlock,
+                minDate: 0,
+                numberOfMonths: [1,2],
+                altField: "#value_calendar" 
+                /*onSelect: function(){
+                    alert(this.value);
+                }*/
+            });
+        });
+
+        
+        //console.log(retValDatesBlock);
+
+        
+    }
+
+    function loadDatesBlock()
+    {
+       var arrDates = [];
+        $.ajax({
+            type: "post",
+            url: "{{ url('datesBlocks') }}",
+            data: "room="+$("#room").val(),
+             async: false,
+            success: function(datos){
+                var cont = 0;
+                $.each(datos, function(i, item){
+                    cont++;
+                    arrDates.push(item.datef);
+                });
+                retValDatesBlock = arrDates;
+            }
+        });
+
+    }
+
+
+
     </script>
 
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <!-- loads some utilities (not needed for your developments) -->
 
     {{ HTML::style('front/css/mdp.css') }}
@@ -88,33 +174,44 @@
                     <label for="nombres">Pais</label>
                     <input type="text" name="pais" class="form-control" placeholder="Pais">
                 </div>
+                
+                <div id="habitaciones">
+                    <div class="row" id="clone_row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="">Tipo de Habitacion:</label>
+                                <select name="room[]" id="room" class="form-control">
+                                    @foreach($rooms as $room)
+                                        <option value="{{ $room->room_id }}" >{{ $room->name }}</option>
+                                    @endforeach
+                                    
 
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="">Tipo de Habitacion:</label>
-                            <select name="" id="" class="form-control">
-                                <option value="Simple">Simple</option>
-                                <option value="Doble">Doble</option>
-                                <option value="Triple">Triple</option>
-                                <option value="Matrimonial">Matrimonial</option>
-
-                            </select> 
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                           <label for="">Numero de Habitaciones:</label>
-                           <input type="text" class="form-control">
+                                </select> 
+                            </div>
                         </div>
 
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                               <label for="">Cant. Hab:</label>
+                               <input type="text" class="form-control" name="cat_hab[]" id="num_hab">
+                            </div>
+
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                               <label for="">Fechas:</label>
+                               <input type="text" class="form-control calendar" name="dates[]" id="calendar-1">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <br/>
+                <a href="#" id="add" class="btn btn-sm btn-success">Agregar MAs Habitaciones y Fechas</a>
+
+                <br/><br/>
                 
 
-                <div class="form-group">    
+                <!--<div class="form-group">    
                     
                     <label for="">Seleccione Fechas:</label>
                     <div id="calendar" class="box"></div>
@@ -126,7 +223,7 @@
                         <div class="col-sm-4"><img src="{{ asset('front/css/images/ui-bg_diagonals-thick_18_b81900_40x40.png') }}" width="15px" height="15px" /> Seleccionados</div>
                     </div>  
             
-                 </div>
+                 </div>-->
                 <br/>
                  
 

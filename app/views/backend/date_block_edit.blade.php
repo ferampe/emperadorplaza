@@ -86,7 +86,8 @@
     <script>
     $(document).on('focus',".calendar", function(){
         $(this).datepicker({
-            dateFormat: "dd/mm/yy"
+            dateFormat: "dd/mm/yy",
+            minDate: -0
         });
     });
 
@@ -108,7 +109,7 @@
         $("#add").bind('click', function(){
             event.preventDefault();
 
-            $('#list > tbody:last').append('<tr><td><input type="text" class="form-control calendar" name="date[]"></td><td><a href="#" class="btn btn-sm btn-danger delete">Eliminar</a></td></tr>');
+            $('#list > tbody:last').append('<tr><td><input type="text" class="form-control calendar" name="date[]" readonly></td><td><a href="#" class="btn btn-sm btn-danger delete">Eliminar</a></td></tr>');
         });
         
     });
@@ -128,7 +129,7 @@
                     var dateFormat = datef[2]+"/"+datef[1]+"/"+datef[0];
 
                     console.log(item.price);
-                    $('#list > tbody:last').append('<tr><td><input type="text" class="form-control calendar" name="date[]" value="'+dateFormat+'"></td><td><a href="#" class="btn btn-sm btn-danger delete">Eliminar</a></td></tr>');
+                    $('#list > tbody:last').append('<tr><td><input type="text" class="form-control calendar" name="date[]" value="'+dateFormat+'" readonly></td><td><a href="#" class="btn btn-sm btn-danger delete">Eliminar</a></td></tr>');
                 });
             }
         });
