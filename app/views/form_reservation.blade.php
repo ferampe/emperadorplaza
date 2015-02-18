@@ -34,22 +34,44 @@
             }                 
         });
 
-        $("#room").bind('change', function(){
-            loadDatesBlock();
 
-            $('#calendar').multiDatesPicker({
+        $("body").on("change", ".room", function(){
+            //alert($(this).val());
+
+            numId = $(this).attr("id").split('-');
+
+            //alert(numId[1]);
+
+            var arrDates = [];
+            $.ajax({
+                type: "post",
+                url: "{{ url('datesBlocks') }}",
+                data: "room="+$("#room-"+numId[1]).val(),
+                 async: false,
+                success: function(datos){
+                    console.log(datos);
+                    var cont = 0;
+                    $.each(datos, function(i, item){
+                        cont++;
+                        arrDates.push(item.datef);
+                    });
+                    retValDatesBlock = arrDates;
+                }
+            });
+
+            $('#calendar-'+numId[1]).multiDatesPicker('destroy');
+
+            $('#calendar-'+numId[1]).multiDatesPicker({
                 dateFormat: 'dd/mm/yy',
                 addDisabledDates: retValDatesBlock,
                 minDate: 0,
                 numberOfMonths: [1,2],
-                altField: "#value_calendar" 
-                /*onSelect: function(){
-                    alert(this.value);
-                }*/
+                altField: "#value_calendar"                     
             });
-        });
 
-        $("#add").bind('click', function(){
+        })
+
+        $("#add").bind('click', function(event){
             event.preventDefault();
            
             idCalendar++;
@@ -64,11 +86,40 @@
                 }
             });
 
-            $('#habitaciones').append('<div class="row" id="clone_row"><div class="col-sm-4"><div class="form-group"><label for="">Tipo de Habitacion:</label>'+roomSelectHtml+'</div></div><div class="col-sm-2"><div class="form-group"><label for="">Cant. Hab:</label><input type="text" class="form-control" name="cat_hab[]" id="num_hab"></div></div><div class="col-sm-4"><div class="form-group"><label for="">Fechas:</label><input type="text" class="form-control calendar" name="dates[]" id="calendar-'+idCalendar+'"></div></div><div class="col-sm-2"><label for="">Eliminar</label><a class="btn btn-danger remove_fields"><i class="glyphicon glyphicon-trash"></i></a></div></div>');
+            $('#habitaciones').append('<div class="row" id="clone_row"><div class="col-sm-4"><div class="form-group"><label for="">Tipo de Habitacion:</label>'+roomSelectHtml+'</div></div><div class="col-sm-2"><div class="form-group"><label for="">Cant. Hab:</label><input type="text" class="form-control" name="cat_hab[]" id="num_hab-'+idCalendar+'"></div></div><div class="col-sm-4"><div class="form-group"><label for="">Fechas:</label><div class="input-group date" id="datetimepicker1"><input type="text" class="form-control calendar" name="dates[]" id="calendar-'+idCalendar+'" /><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div></div><div class="col-sm-2"><label for="">Eliminar</label><a class="btn btn-danger remove_fields"><i class="glyphicon glyphicon-trash"></i></a></div></div>');
+
+            var arrDates = [];
+            $.ajax({
+                type: "post",
+                url: "{{ url('datesBlocks') }}",
+                data: "room="+$("#room-"+idCalendar).val(),
+                 async: false,
+                success: function(datos){
+                    var cont = 0;
+                    $.each(datos, function(i, item){
+                        cont++;
+                        arrDates.push(item.datef);
+                    });
+                    retValDatesBlock = arrDates;
+                }
+            });
+
+            
+            $('#calendar-'+idCalendar).multiDatesPicker({
+                dateFormat: 'dd/mm/yy',
+                addDisabledDates: retValDatesBlock,
+                minDate: 0,
+                numberOfMonths: [1,2],
+                altField: "#value_calendar" 
+                /*onSelect: function(){
+                    alert(this.value);
+                }*/
+            });
+           
 
 
 
-            instanceMultiDatePicker();
+            //instanceMultiDatePicker();
         });
 
     });
@@ -85,9 +136,7 @@
                 minDate: 0,
                 numberOfMonths: [1,2],
                 altField: "#value_calendar" 
-                /*onSelect: function(){
-                    alert(this.value);
-                }*/
+                
             });
         });
 
@@ -103,7 +152,7 @@
         $.ajax({
             type: "post",
             url: "{{ url('datesBlocks') }}",
-            data: "room="+$("#room").val(),
+            data: "room="+$("#room-1").val(),
              async: false,
             success: function(datos){
                 var cont = 0;
@@ -180,7 +229,7 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="">Tipo de Habitacion:</label>
-                                <select name="room[]" id="room" class="form-control">
+                                <select name="room[]" id="room-1" class="form-control room">
                                     @foreach($rooms as $room)
                                         <option value="{{ $room->room_id }}" >{{ $room->name }}</option>
                                     @endforeach
@@ -193,7 +242,7 @@
                         <div class="col-sm-2">
                             <div class="form-group">
                                <label for="">Cant. Hab:</label>
-                               <input type="text" class="form-control" name="cat_hab[]" id="num_hab">
+                               <input type="text" class="form-control" name="cat_hab[]" id="num_hab-1">
                             </div>
 
                         </div>
@@ -201,8 +250,23 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                <label for="">Fechas:</label>
-                               <input type="text" class="form-control calendar" name="dates[]" id="calendar-1">
+                               
+
+                               <div class='input-group date' id='datetimepicker1'>
+                                    <input type='text' class="form-control calendar" name="dates[]" id="calendar-1" />
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                               
                             </div>
+
+
+                            
+
+
+
+
+
                         </div>
                     </div>
                 </div>
@@ -231,6 +295,11 @@
                     <label for="">Comentarios:</label>
                     <textarea class="form-control" rows="7"></textarea>
                  </div>
+
+
+            
+
+
 
             </form>
     </div>

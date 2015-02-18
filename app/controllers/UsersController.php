@@ -133,7 +133,7 @@ class UsersController extends Controller
     public function login()
     {
         if (Confide::user()) {
-            return Redirect::to('/');
+            return Redirect::to('/admin/room');
         } else {
             return View::make(Config::get('confide::login_form'));
         }
@@ -150,7 +150,7 @@ class UsersController extends Controller
         $input = Input::all();
 
         if ($repo->login($input)) {
-            return Redirect::intended('/');
+            return Redirect::intended('/admin/room');
         } else {
             if ($repo->isThrottled($input)) {
                 $err_msg = Lang::get('confide::confide.alerts.too_many_attempts');
@@ -264,6 +264,6 @@ class UsersController extends Controller
     {
         Confide::logout();
 
-        return Redirect::to('/');
+        return Redirect::to('/users/login');
     }
 }

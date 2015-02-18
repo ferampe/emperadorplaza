@@ -75,7 +75,7 @@ Route::post('datesBlocks', function(){
 Route::post('getBlockSelect', function(){
     $rooms = Room::all();
 
-    $roomSelect = '<select name="room[]" id="room-'.$_POST['id'].'" class="form-control">';
+    $roomSelect = '<select name="room[]" id="room-'.$_POST['id'].'" class="form-control room">';
     foreach($rooms as $room)
     {
         $roomSelect .= '<option value="'.$room->room_id.'" >'.$room->name.'</option>';
