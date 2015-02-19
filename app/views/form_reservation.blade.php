@@ -417,7 +417,7 @@ $paises = array(
 
                 <div class="form-group">
                     <label for="nombres">Pais</label>
-                    {{ Form::select("pais", $paises) }}
+                    {{ Form::select("pais", $paises, array('class' => 'form-control')) }}
                     <!--<input type="text" name="pais" class="form-control" -->placeholder="Pais">
                 </div>
                 
