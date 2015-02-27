@@ -22,11 +22,7 @@ Route::get('form', function(){
     }
 
     $roomSelect .= '</select>';
-        
-
-                                    
-
-                             
+                                     
 
     $datesBlockQuery = DB::table('dates_block')
                      ->select(DB::raw('DATE_FORMAT(date, "%d/%m/%Y") as datef, room_id'))
@@ -70,6 +66,32 @@ Route::post('datesBlocks', function(){
                      ->get();
 
     return Response::json($datesBlockQuery);
+});
+
+Route::post('datesPrices', function(){
+    $price = 0;
+
+    $datesPriceQuery = DB::table('dates_prices')
+                    ->select('price')
+                    ->where('date', '=', $_POST['date'])
+                    ->where('room_id', '=', $_POST['room'])
+                    ->first();
+
+
+    if($datesPriceQuery)
+    {
+        $price = $datesPriceQuery->price;
+        
+    }else{
+        $datesPriceQuery = DB::table('rooms')
+                    ->select('general_price')               
+                    ->where('room_id', '=', $_POST['room'])
+                    ->first();
+
+        $price = $datesPriceQuery->general_price;
+    }
+
+    return $price;
 });
 
 Route::post('getBlockSelect', function(){

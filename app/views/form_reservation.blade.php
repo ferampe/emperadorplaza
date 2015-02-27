@@ -220,52 +220,30 @@ $paises = array(
 
     $(document).ready(function(){
 
-        instanceMultiDatePicker();
+        instanceMultiDatePicker("calendar-1", "room-1");
         
 
         $(document).on('click',".remove_fields", function(){
             event.preventDefault();
-            if(confirm("Esta Seguro deeliminar la fecha y el precio??")){
+            if(confirm("Esta Seguro de eliminar la fecha y el precio??")){
                 $(this).closest(".row").remove();    
             }                 
         });
 
 
         $("body").on("change", ".room", function(){
-            //alert($(this).val());
-
             numId = $(this).attr("id").split('-');
-
-            //alert(numId[1]);
-
-            var arrDates = [];
-            $.ajax({
-                type: "post",
-                url: "{{ url('datesBlocks') }}",
-                data: "room="+$("#room-"+numId[1]).val(),
-                 async: false,
-                success: function(datos){
-                    console.log(datos);
-                    var cont = 0;
-                    $.each(datos, function(i, item){
-                        cont++;
-                        arrDates.push(item.datef);
-                    });
-                    retValDatesBlock = arrDates;
-                }
-            });
-
             $('#calendar-'+numId[1]).multiDatesPicker('destroy');
+            $('#calendar-'+numId[1]).val("");
+            instanceMultiDatePicker("calendar-"+numId[1], "room-"+numId[1]);
 
-            $('#calendar-'+numId[1]).multiDatesPicker({
-                dateFormat: 'dd/mm/yy',
-                addDisabledDates: retValDatesBlock,
-                minDate: 0,
-                numberOfMonths: [1,2],
-                altField: "#value_calendar"                     
-            });
+            $("#info-"+numId[1]).html("");
 
-        })
+        });
+
+        $("body").on("change", ".habi", function(){
+            alert("cambio");
+        });
 
         $("#add").bind('click', function(event){
             event.preventDefault();
@@ -282,73 +260,83 @@ $paises = array(
                 }
             });
 
-            $('#habitaciones').append('<div class="row" id="clone_row"><div class="col-sm-4"><div class="form-group"><label for="">Tipo de Habitacion:</label>'+roomSelectHtml+'</div></div><div class="col-sm-2"><div class="form-group"><label for="">Cant. Hab:</label><input type="text" class="form-control" name="cat_hab[]" id="num_hab-'+idCalendar+'"></div></div><div class="col-sm-4"><div class="form-group"><label for="">Fechas:</label><div class="input-group date" id="datetimepicker1"><input type="text" class="form-control calendar" name="dates[]" id="calendar-'+idCalendar+'" /><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div></div><div class="col-sm-2"><label for="">Eliminar</label><a class="btn btn-danger remove_fields"><i class="glyphicon glyphicon-trash"></i></a></div></div>');
+            $('#habitaciones').append('<div class="row" id="clone_row"><div class="col-sm-4"><div class="form-group"><label for="">Tipo de Habitacion:</label>'+roomSelectHtml+'</div></div><div class="col-sm-2"><div class="form-group"><label for="">Cant. Hab:</label><input type="text" class="form-control habi" name="cat_hab[]" id="num_hab-'+idCalendar+'" value="1"></div></div><div class="col-sm-5"><div class="form-group"><label for="">Fechas:</label><br/><input type="text" name="dates[]" id="calendar-'+idCalendar+'" class=" calendar input-calendar"></div></div><div class="col-sm-1"><label>Eli..</label><a class="btn btn-danger remove_fields"><i class="glyphicon glyphicon-trash"></i></a></div><div class="row info" ></div><div class="col-sm-12" id="info-'+idCalendar+'"></div></div>');
 
-            var arrDates = [];
-            $.ajax({
-                type: "post",
-                url: "{{ url('datesBlocks') }}",
-                data: "room="+$("#room-"+idCalendar).val(),
-                 async: false,
-                success: function(datos){
-                    var cont = 0;
-                    $.each(datos, function(i, item){
-                        cont++;
-                        arrDates.push(item.datef);
-                    });
-                    retValDatesBlock = arrDates;
-                }
-            });
-
-            
-            $('#calendar-'+idCalendar).multiDatesPicker({
-                dateFormat: 'dd/mm/yy',
-                addDisabledDates: retValDatesBlock,
-                minDate: 0,
-                numberOfMonths: [1,2],
-                altField: "#value_calendar" 
-                /*onSelect: function(){
-                    alert(this.value);
-                }*/
-            });
+            instanceMultiDatePicker("calendar-"+idCalendar, "room-"+idCalendar);
            
 
-
-
-            //instanceMultiDatePicker();
         });
 
     });
 
-    function instanceMultiDatePicker()
+    function instanceMultiDatePicker(element_calendar, element_room)
     {
+       
+        loadDatesBlock(element_room);
 
-        loadDatesBlock();
 
-        $('.calendar').each(function(){
-            $(this).multiDatesPicker({
-                dateFormat: 'dd/mm/yy',
-                addDisabledDates: retValDatesBlock,
-                minDate: 0,
-                numberOfMonths: [1,2],
-                altField: "#value_calendar" 
-                
-            });
+        $("#"+element_calendar).multiDatesPicker({
+            showOn: "button",
+            buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
+            dateFormat: 'dd/mm/yy',
+            addDisabledDates: retValDatesBlock,
+            minDate: 0,
+            numberOfMonths: [1,2],                
+            onSelect: function(){
+                var arrMonth = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"];
+
+                var id = $(this).attr("id").split("-");
+                var dates = $(this).multiDatesPicker('getDates');
+                var html = '';
+
+                $.each(dates, function (i, val)
+                {
+
+                    var arrDates = val.split("/");
+                    var fecha_texto = arrDates[2]+"-"+arrDates[1]+"-"+arrDates[0];
+                    var price = 0;
+
+                    $.ajax({
+                        type: "post",
+                        url: "{{ url('datesPrices') }}",
+                        data: "date="+fecha_texto+"&room="+$("#room-"+id[1]).val(),
+                         async: false,
+                        success: function(datos){
+                            console.log(datos);
+                            price = datos;
+                        }
+                    });
+
+                    
+
+                    ms = Date.parse(fecha_texto);
+                    fecha = new Date(ms);
+                    html += "<p>"+arrDates[0]+" de "+arrMonth[parseInt(arrDates[1]) - 1 ]+" del "+arrDates[2]+", costo $"+price+"<input type='hidden' value='"+price+"' id='price-"+id[1]+"'></p>";
+                })
+
+                if($("#num_hab-"+id[1]).val() > 1)
+                {
+                    var mensaje = "Reserva de <strong>"+$("#num_hab-"+id[1]).val()+"</strong> habitaciones tipo <strong>"+$("#room-"+id[1]+" :selected").text()+"</strong>";
+                }else{
+                    var mensaje = "Reserva de <strong>1</strong> habitacion tipo <strong>"+$("#room-"+id[1]+" :selected").text()+"</strong>";
+                }
+
+                $("#info-"+id[1]).html(mensaje+html+"<hr/>");
+            }
+            
         });
 
-        
-        //console.log(retValDatesBlock);
 
         
     }
 
-    function loadDatesBlock()
+    function loadDatesBlock(element_room)
     {
        var arrDates = [];
         $.ajax({
             type: "post",
             url: "{{ url('datesBlocks') }}",
-            data: "room="+$("#room-1").val(),
+            data: "room="+$("#"+element_room).val(),
              async: false,
             success: function(datos){
                 var cont = 0;
@@ -386,6 +374,19 @@ $paises = array(
     <style>
         div.box{
          font-size:17px;
+        }
+
+        .input-calendar
+        {
+            color: red;
+            height: 34px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .ui-datepicker-trigger
+        {
+            height: 34px;
         }
     </style>
 </head>
@@ -439,7 +440,7 @@ $paises = array(
                         <div class="col-sm-2">
                             <div class="form-group">
                                <label for="">Cant. Hab:</label>
-                               <input type="text" class="form-control" name="cat_hab[]" id="num_hab-1">
+                               <input type="text" class="form-control habi" name="cat_hab[]" id="num_hab-1" value="1">
                             </div>
 
                         </div>
@@ -447,26 +448,30 @@ $paises = array(
                         <div class="col-sm-6">
                             <div class="form-group">
                                <label for="">Fechas:</label>
-                               
+                               <br/>
+                                <input type="text" name="dates[]" id="calendar-1" class=" calendar input-calendar">
+                                   
 
-                               <div class='input-group date' id='datetimepicker1'>
+                               <!--<div class='input-group date' id='datetimepicker1'>
                                     <input type='text' class="form-control calendar" name="dates[]" id="calendar-1" />
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                                     </span>
-                                </div>
+                                </div>-->
+
+                                
                                
                             </div>
 
-
-                            
-
-
-
-
-
                         </div>
+
+                        
+                            <div class="col-sm-12" id="info-1"></div>
+                        
+
                     </div>
+                    
                 </div>
+
                 <a href="#" id="add" class="btn btn-sm btn-success">Agregar MAs Habitaciones y Fechas</a>
 
                 <br/><br/>
