@@ -214,7 +214,9 @@ $paises = array(
     {{ HTML::script('front/js/jquery-ui.multidatespicker.js') }}
 
     <script>
-    var retValDatesBlock = null;
+    var retValDatesBlock = new Array();
+
+    //alert(typeof retValDatesBlock);
     var idCalendar = 1;
     var roomSelectHtml = '{{ $roomSelect }}';
 
@@ -273,7 +275,7 @@ $paises = array(
     {
        
         loadDatesBlock(element_room);
-
+        
 
         $("#"+element_calendar).multiDatesPicker({
             showOn: "button",
@@ -283,45 +285,42 @@ $paises = array(
             minDate: 0,
             numberOfMonths: [1,2],                
             onSelect: function(){
-                var arrMonth = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"];
+               
 
                 var id = $(this).attr("id").split("-");
                 var dates = $(this).multiDatesPicker('getDates');
-                var html = '';
-
+                //var html = '';
+                
+                var arrDatesGlobal = new Array();
                 $.each(dates, function (i, val)
                 {
-
+                    
                     var arrDates = val.split("/");
                     var fecha_texto = arrDates[2]+"-"+arrDates[1]+"-"+arrDates[0];
-                    var price = 0;
+                    arrDatesGlobal.push(fecha_texto);
 
-                    $.ajax({
-                        type: "post",
-                        url: "{{ url('datesPrices') }}",
-                        data: "date="+fecha_texto+"&room="+$("#room-"+id[1]).val(),
-                         async: false,
-                        success: function(datos){
-                            console.log(datos);
-                            price = datos;
+                });
+
+                $.ajax({
+                    type: "post",
+                    url: "{{ url('datesPrices') }}",
+                    data: "dates="+JSON.stringify(arrDatesGlobal)+"&room="+$("#room-"+id[1]).val()+"&num_hab="+$("#num_hab-"+id[1]).val(),
+                    async: false,
+                    success: function(datos){
+                        console.log(datos);
+
+                        if($("#num_hab-"+id[1]).val() > 1)
+                        {
+                            var mensaje = "Reserva de <strong>"+$("#num_hab-"+id[1]).val()+"</strong> habitaciones tipo <strong>"+$("#room-"+id[1]+" :selected").text()+"</strong>";
+                        }else{
+                            var mensaje = "Reserva de <strong>1</strong> habitacion tipo <strong>"+$("#room-"+id[1]+" :selected").text()+"</strong>";
                         }
-                    });
 
-                    
+                        $("#info-"+id[1]).html("<p>"+mensaje+"</p>"+datos+"<hr/>");
+                        //price = datos;
+                    }
+                });
 
-                    ms = Date.parse(fecha_texto);
-                    fecha = new Date(ms);
-                    html += "<p>"+arrDates[0]+" de "+arrMonth[parseInt(arrDates[1]) - 1 ]+" del "+arrDates[2]+", costo $"+price+"<input type='hidden' value='"+price+"' id='price-"+id[1]+"'></p>";
-                })
-
-                if($("#num_hab-"+id[1]).val() > 1)
-                {
-                    var mensaje = "Reserva de <strong>"+$("#num_hab-"+id[1]).val()+"</strong> habitaciones tipo <strong>"+$("#room-"+id[1]+" :selected").text()+"</strong>";
-                }else{
-                    var mensaje = "Reserva de <strong>1</strong> habitacion tipo <strong>"+$("#room-"+id[1]+" :selected").text()+"</strong>";
-                }
-
-                $("#info-"+id[1]).html(mensaje+html+"<hr/>");
             }
             
         });
@@ -332,7 +331,7 @@ $paises = array(
 
     function loadDatesBlock(element_room)
     {
-       var arrDates = [];
+       //var arrDates = [];
         $.ajax({
             type: "post",
             url: "{{ url('datesBlocks') }}",
@@ -340,14 +339,47 @@ $paises = array(
              async: false,
             success: function(datos){
                 var cont = 0;
+                //alert(datos);
                 $.each(datos, function(i, item){
                     cont++;
-                    arrDates.push(item.datef);
+                    retValDatesBlock.push(item.datef);
                 });
-                retValDatesBlock = arrDates;
+
+                if(retValDatesBlock.length < 1){
+                    retValDatesBlock.push(mostrarFecha(-1));
+                }
+                //console.log(retValDatesBlock.length);
+                //console.log(mostrarFecha(-1));
+                //retValDatesBlock = arrDates;
+                //alert(retValDatesBlock);
             }
         });
 
+    }
+
+    function mostrarFecha(days){
+        milisegundos=parseInt(35*24*60*60*1000);
+        
+        fecha=new Date();
+        day=fecha.getDate();
+        // el mes es devuelto entre 0 y 11
+        month=fecha.getMonth()+1;
+        year=fecha.getFullYear();
+        
+        //document.write("Fecha actual: "+day+"/"+month+"/"+year);
+        
+        //Obtenemos los milisegundos desde media noche del 1/1/1970
+        tiempo=fecha.getTime();
+        //Calculamos los milisegundos sobre la fecha que hay que sumar o restar...
+        milisegundos=parseInt(days*24*60*60*1000);
+        //Modificamos la fecha actual
+        total=fecha.setTime(tiempo+milisegundos);
+        day=fecha.getDate();
+        month=fecha.getMonth()+1;
+        year=fecha.getFullYear();
+
+        //document.write("Fecha modificada: "+day+"/"+month+"/"+year);
+        return day+"/"+month+"/"+year;
     }
 
 

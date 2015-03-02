@@ -68,7 +68,7 @@ Route::post('datesBlocks', function(){
     return Response::json($datesBlockQuery);
 });
 
-Route::post('datesPrices', function(){
+/*Route::post('datesPrices', function(){
     $price = 0;
 
     $datesPriceQuery = DB::table('dates_prices')
@@ -92,6 +92,84 @@ Route::post('datesPrices', function(){
     }
 
     return $price;
+});*/
+
+Route::post('datesPrices', function(){
+    $price = 0;
+
+    $arrDatesFromForm = array();
+    $arrDatesFromDb = array();
+
+    $datesPriceQuery = DB::table('rooms')
+                    ->select('general_price')               
+                    ->where('room_id', '=', $_POST['room'])
+                    ->first();
+
+    $priceGeneral = $datesPriceQuery->general_price;
+
+    $arrayDatesFromForm=json_decode($_POST['dates']);
+
+    foreach($arrayDatesFromForm as $arrayFromForm)
+    {
+        $arrDatesFromForm[$arrayFromForm] = $priceGeneral;
+    }
+    //var_dump($arrDates);
+
+    $datesPriceQuery = DB::table('dates_prices')
+                    ->select('date', 'price')
+                    ->where('room_id', '=', $_POST['room'])
+                    ->whereIn('date', $arrayDatesFromForm)                    
+                    ->get();
+
+    if($datesPriceQuery)
+    {
+        foreach($datesPriceQuery as $datePrice)
+        {
+            
+            $arrDatesFromDb[$datePrice->date] = $datePrice->price;
+            
+        }
+    }
+
+    $arrResult = array_merge($arrDatesFromForm, $arrDatesFromDb);
+
+    $html = "<div class='row'><div class='col-sm-12'><table class='table'>";
+
+    //$dias = array("Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sábado");
+    $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+
+    $sum = 0;
+    foreach ($arrResult as $key => $value) {
+        
+        //$html .= date("F d, Y", strtotime($key))." $".$value." <br/>";
+        $sum = $sum + $value;
+
+        $arrDatesSingle = explode("-", $key);
+        $html .= "<tr><td>".$arrDatesSingle[2]." de ".$meses[intval($arrDatesSingle[1]) - 1]." del ".$arrDatesSingle[0]."</td><td> $".$value." </td></tr>";
+    }
+
+    $html .= "<tr><td>Total:</td><td>$".$sum."<input type='hidden' class='totales' value='".$sum."'></td></tr></table></div></div>";
+
+    return $html;
+    //var_dump($arrResult);
+
+    //var_dump($datesPriceQuery);
+    //var_dump(DB::getQueryLog());
+
+    /*if($datesPriceQuery)
+    {
+        $price = $datesPriceQuery->price;
+        
+    }else{
+        $datesPriceQuery = DB::table('rooms')
+                    ->select('general_price')               
+                    ->where('room_id', '=', $_POST['room'])
+                    ->first();
+
+        $price = $datesPriceQuery->general_price;
+    }*/
+
+    //return $price;
 });
 
 Route::post('getBlockSelect', function(){
