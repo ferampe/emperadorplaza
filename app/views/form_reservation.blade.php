@@ -228,7 +228,8 @@ $paises = array(
         $(document).on('click',".remove_fields", function(){
             event.preventDefault();
             if(confirm("Esta Seguro de eliminar la fecha y el precio??")){
-                $(this).closest(".row").remove();    
+                $(this).closest(".row").remove(); 
+                calculoGeneral();   
             }                 
         });
 
@@ -240,6 +241,7 @@ $paises = array(
             instanceMultiDatePicker("calendar-"+numId[1], "room-"+numId[1]);
 
             $("#info-"+numId[1]).html("");
+            calculoGeneral();   
 
         });
 
@@ -356,16 +358,21 @@ $paises = array(
                 //price = datos;
                 //
                 //
-                var totalGeneral = 0;
-                $(".totales").each(function(){
-                    //alert($(this).val());
-
-                    totalGeneral = totalGeneral + parseFloat($(this).val());
-                });
-
-                $("#totalGeneral").html("<p><strong>Total</strong> $"+totalGeneral+"</p>");
+                calculoGeneral();
+                
             }
         });
+    }
+
+    function calculoGeneral(){
+        var totalGeneral = 0;
+        $(".totales").each(function(){
+            //alert($(this).val());
+
+            totalGeneral = totalGeneral + parseFloat($(this).val());
+        });
+
+        $("#totalGeneral").html("<p><strong>Total</strong> $"+totalGeneral+"</p>");
     }
 
     function loadDatesBlock(element_room)
