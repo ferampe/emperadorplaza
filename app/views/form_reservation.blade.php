@@ -243,8 +243,31 @@ $paises = array(
 
         });
 
-        $("body").on("change", ".habi", function(){
-            alert("cambio");
+        $("body").on("keyup", ".habi", function(){
+            if (isNaN($(this).val())){
+                alert ("Numero de Habitacion Invalido.");
+                $(this).val(1);
+            }
+
+            var id = $(this).attr("id").split("-");
+            var dates = $("#calendar-"+id[1]).multiDatesPicker('getDates');
+            //var html = '';
+            
+            var arrDatesGlobal = new Array();
+            $.each(dates, function (i, val)
+            {
+                
+                var arrDates = val.split("/");
+                var fecha_texto = arrDates[2]+"-"+arrDates[1]+"-"+arrDates[0];
+                arrDatesGlobal.push(fecha_texto);
+
+            });
+
+            getDatesPrices(arrDatesGlobal, id[1]);
+
+            //alert("cambio");
+            //alert($(this).attr("id"));
+            //alert($(this).val());
         });
 
         $("#add").bind('click', function(event){
@@ -301,25 +324,8 @@ $paises = array(
 
                 });
 
-                $.ajax({
-                    type: "post",
-                    url: "{{ url('datesPrices') }}",
-                    data: "dates="+JSON.stringify(arrDatesGlobal)+"&room="+$("#room-"+id[1]).val()+"&num_hab="+$("#num_hab-"+id[1]).val(),
-                    async: false,
-                    success: function(datos){
-                        console.log(datos);
+                getDatesPrices(arrDatesGlobal, id[1]);
 
-                        if($("#num_hab-"+id[1]).val() > 1)
-                        {
-                            var mensaje = "Reserva de <strong>"+$("#num_hab-"+id[1]).val()+"</strong> habitaciones tipo <strong>"+$("#room-"+id[1]+" :selected").text()+"</strong>";
-                        }else{
-                            var mensaje = "Reserva de <strong>1</strong> habitacion tipo <strong>"+$("#room-"+id[1]+" :selected").text()+"</strong>";
-                        }
-
-                        $("#info-"+id[1]).html("<p>"+mensaje+"</p>"+datos+"<hr/>");
-                        //price = datos;
-                    }
-                });
 
             }
             
@@ -327,6 +333,39 @@ $paises = array(
 
 
         
+    }
+
+    function getDatesPrices(arrDatesGlobal, id)
+    {
+        $.ajax({
+            type: "post",
+            url: "{{ url('datesPrices') }}",
+            data: "dates="+JSON.stringify(arrDatesGlobal)+"&room="+$("#room-"+id).val()+"&num_hab="+$("#num_hab-"+id).val(),
+            async: false,
+            success: function(datos){
+                console.log(datos);
+
+                if($("#num_hab-"+id).val() > 1)
+                {
+                    var mensaje = "Reserva de <strong>"+$("#num_hab-"+id).val()+"</strong> habitaciones tipo <strong>"+$("#room-"+id+" :selected").text()+"</strong>";
+                }else{
+                    var mensaje = "Reserva de <strong>1</strong> habitacion tipo <strong>"+$("#room-"+id+" :selected").text()+"</strong>";
+                }
+
+                $("#info-"+id).html("<p>"+mensaje+"</p>"+datos+"<hr/>");
+                //price = datos;
+                //
+                //
+                var totalGeneral = 0;
+                $(".totales").each(function(){
+                    //alert($(this).val());
+
+                    totalGeneral = totalGeneral + parseFloat($(this).val());
+                });
+
+                $("#totalGeneral").html("<p><strong>Total</strong> $"+totalGeneral+"</p>");
+            }
+        });
     }
 
     function loadDatesBlock(element_room)
@@ -481,16 +520,7 @@ $paises = array(
                             <div class="form-group">
                                <label for="">Fechas:</label>
                                <br/>
-                                <input type="text" name="dates[]" id="calendar-1" class=" calendar input-calendar">
-                                   
-
-                               <!--<div class='input-group date' id='datetimepicker1'>
-                                    <input type='text' class="form-control calendar" name="dates[]" id="calendar-1" />
-                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>-->
-
-                                
+                                <input type="text" name="dates[]" id="calendar-1" class=" calendar input-calendar">  
                                
                             </div>
 
@@ -502,6 +532,12 @@ $paises = array(
 
                     </div>
                     
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12" id="totalGeneral">
+                        
+                    </div>
                 </div>
 
                 <a href="#" id="add" class="btn btn-sm btn-success">Agregar MAs Habitaciones y Fechas</a>

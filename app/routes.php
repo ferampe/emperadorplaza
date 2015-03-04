@@ -148,7 +148,9 @@ Route::post('datesPrices', function(){
         $html .= "<tr><td>".$arrDatesSingle[2]." de ".$meses[intval($arrDatesSingle[1]) - 1]." del ".$arrDatesSingle[0]."</td><td> $".$value." </td></tr>";
     }
 
-    $html .= "<tr><td>Total:</td><td>$".$sum."<input type='hidden' class='totales' value='".$sum."'></td></tr></table></div></div>";
+    $suma = $sum * (int)$_POST['num_hab'];
+
+    $html .= "<tr><td>Sub Total:</td><td>$".$suma."<input type='hidden' class='totales' value='".$suma."'></td></tr></table></div></div>";
 
     return $html;
     //var_dump($arrResult);
