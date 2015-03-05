@@ -225,7 +225,7 @@ $paises = array(
         instanceMultiDatePicker("calendar-1", "room-1");
         
 
-        $(document).on('click',".remove_fields", function(){
+        $(document).on('click',".remove_fields", function(event){
             event.preventDefault();
             if(confirm("Esta Seguro de eliminar la fecha y el precio??")){
                 $(this).closest(".row").remove(); 
@@ -466,6 +466,14 @@ $paises = array(
         {
             height: 34px;
         }
+
+        #totalGeneral{
+            background-color: #FCCE4A;
+            font-weight: bold;
+            font-size: 1em;
+            margin-bottom: 5px;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
@@ -541,13 +549,13 @@ $paises = array(
                     
                 </div>
 
-                <div class="row">
+                
                     <div class="col-sm-12" id="totalGeneral">
                         
                     </div>
-                </div>
+                
 
-                <a href="#" id="add" class="btn btn-sm btn-success">Agregar MAs Habitaciones y Fechas</a>
+                <p><a href="#" id="add" class="btn btn-sm btn-success">Agregar MAs Habitaciones y Fechas</a></p>
 
                 <br/><br/>
                 
