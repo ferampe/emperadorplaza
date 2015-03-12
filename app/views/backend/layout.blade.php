@@ -93,6 +93,12 @@
                             'collapse' => false,
                             'name' => 'Bloquear Dias',
                             'link' => url('admin/date_block/edit')
+                        ),
+                    'terminos' =>
+                        array(
+                            'collapse' => false,
+                            'name' => 'Terminos y condiciones',
+                            'link' => url('admin/config/edit/1')
                         )
                 );                
 

@@ -1,200 +1,4 @@
-<?php
-$paises = array(
-        "Afghanistan",
-        "Albania",
-        "Algeria",
-        "Andorra",
-        "Angola",
-        "Antigua and Barbuda",
-        "Argentina",
-        "Armenia",
-        "Australia",
-        "Austria",
-        "Azerbaijan",
-        "Bahamas",
-        "Bahrain",
-        "Bangladesh",
-        "Barbados",
-        "Belarus",
-        "Belgium",
-        "Belize",
-        "Benin",
-        "Bhutan",
-        "Bolivia",
-        "Bosnia and Herzegovina",
-        "Botswana",
-        "Brazil",
-        "Brunei",
-        "Bulgaria",
-        "Burkina Faso",
-        "Burundi",
-        "Cambodia",
-        "Cameroon",
-        "Canada",
-        "Cape Verde",
-        "Central African Republic",
-        "Chad",
-        "Chile",
-        "China",
-        "Colombia",
-        "Comoros",
-        "Congo (Brazzaville)",
-        "Congo",
-        "Costa Rica",
-        "Cote d'Ivoire",
-        "Croatia",
-        "Cuba",
-        "Cyprus",
-        "Czech Republic",
-        "Denmark",
-        "Djibouti",
-        "Dominica",
-        "Dominican Republic",
-        "East Timor (Timor Timur)",
-        "Ecuador",
-        "Egypt",
-        "El Salvador",
-        "Equatorial Guinea",
-        "Eritrea",
-        "Estonia",
-        "Ethiopia",
-        "Fiji",
-        "Finland",
-        "France",
-        "Gabon",
-        "Gambia, The",
-        "Georgia",
-        "Germany",
-        "Ghana",
-        "Greece",
-        "Grenada",
-        "Guatemala",
-        "Guinea",
-        "Guinea-Bissau",
-        "Guyana",
-        "Haiti",
-        "Honduras",
-        "Hungary",
-        "Iceland",
-        "India",
-        "Indonesia",
-        "Iran",
-        "Iraq",
-        "Ireland",
-        "Israel",
-        "Italy",
-        "Jamaica",
-        "Japan",
-        "Jordan",
-        "Kazakhstan",
-        "Kenya",
-        "Kiribati",
-        "Korea, North",
-        "Korea, South",
-        "Kuwait",
-        "Kyrgyzstan",
-        "Laos",
-        "Latvia",
-        "Lebanon",
-        "Lesotho",
-        "Liberia",
-        "Libya",
-        "Liechtenstein",
-        "Lithuania",
-        "Luxembourg",
-        "Macedonia",
-        "Madagascar",
-        "Malawi",
-        "Malaysia",
-        "Maldives",
-        "Mali",
-        "Malta",
-        "Marshall Islands",
-        "Mauritania",
-        "Mauritius",
-        "Mexico",
-        "Micronesia",
-        "Moldova",
-        "Monaco",
-        "Mongolia",
-        "Morocco",
-        "Mozambique",
-        "Myanmar",
-        "Namibia",
-        "Nauru",
-        "Nepa",
-        "Netherlands",
-        "New Zealand",
-        "Nicaragua",
-        "Niger",
-        "Nigeria",
-        "Norway",
-        "Oman",
-        "Pakistan",
-        "Palau",
-        "Panama",
-        "Papua New Guinea",
-        "Paraguay",
-        "Peru",
-        "Philippines",
-        "Poland",
-        "Portugal",
-        "Qatar",
-        "Romania",
-        "Russia",
-        "Rwanda",
-        "Saint Kitts and Nevis",
-        "Saint Lucia",
-        "Saint Vincent",
-        "Samoa",
-        "San Marino",
-        "Sao Tome and Principe",
-        "Saudi Arabia",
-        "Senegal",
-        "Serbia and Montenegro",
-        "Seychelles",
-        "Sierra Leone",
-        "Singapore",
-        "Slovakia",
-        "Slovenia",
-        "Solomon Islands",
-        "Somalia",
-        "South Africa",
-        "Spain",
-        "Sri Lanka",
-        "Sudan",
-        "Suriname",
-        "Swaziland",
-        "Sweden",
-        "Switzerland",
-        "Syria",
-        "Taiwan",
-        "Tajikistan",
-        "Tanzania",
-        "Thailand",
-        "Togo",
-        "Tonga",
-        "Trinidad and Tobago",
-        "Tunisia",
-        "Turkey",
-        "Turkmenistan",
-        "Tuvalu",
-        "Uganda",
-        "Ukraine",
-        "United Arab Emirates",
-        "United Kingdom",
-        "United States",
-        "Uruguay",
-        "Uzbekistan",
-        "Vanuatu",
-        "Vatican City",
-        "Venezuela",
-        "Vietnam",
-        "Yemen",
-        "Zambia",
-        "Zimbabwe"
-    );
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -439,6 +243,10 @@ $paises = array(
 
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+
+    
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <!-- loads some utilities (not needed for your developments) -->
 
@@ -461,7 +269,7 @@ $paises = array(
 
         .input-calendar
         {
-            color: red;
+            
             height: 34px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -487,32 +295,10 @@ $paises = array(
 <div class="row">
     <div class="col-sm-3"></div>
     <div class="col-sm-6">
-            <h3>Reservation</h3>
+            <h3>Calculo de su Reserva</h3>
             <br>
             <form action="#">
-                
 
-                <div class="form-group">
-                    <label for="nombres">Nombres</label>
-                    <input type="text" name="nombres" class="form-control" placeholder="Nombres y Apellidos">
-                </div>
-
-                <div class="form-group">
-                    <label for="nombres">Email</label>
-                    <input type="text" name="email" class="form-control" placeholder="Email">
-                </div>
-
-                <div class="form-group">
-                    <label for="nombres">Telefono</label>
-                    <input type="text" name="telefono" class="form-control" placeholder="Telefono">
-                </div>
-
-                <div class="form-group">
-                    <label for="nombres">Pais</label>
-                    {{ Form::select("pais", $paises, null, array('class' => 'form-control')) }}
-                    <!--<input type="text" name="pais" class="form-control" placeholder="Pais">-->
-                </div>
-                
                 <div id="habitaciones">
                     <div class="row" id="clone_row">
                         <div class="col-sm-4">
@@ -543,50 +329,56 @@ $paises = array(
                                 <input type="text" name="dates[]" id="calendar-1" class=" calendar input-calendar">  
                                
                             </div>
+                        </div>                        
+                        <div class="col-sm-12" id="info-1"></div>                    
+                    </div>                    
+                </div>                
+                <div class="col-sm-12" id="totalGeneral"></div>
+                
+                <p><a href="#" id="add" class="btn btn-sm btn-success">Agregar tipo de habitacion</a></p>
 
-                        </div>
+                <br/>
 
-                        
-                            <div class="col-sm-12" id="info-1"></div>
-                        
+                
 
-                    </div>
                     
+                
+                <h3>Datos Personales</h3>
+                <br>
+
+                <div class="form-group">
+                    <label for="nombres">Nombres</label>
+                    <input type="text" name="nombres" class="form-control" placeholder="Nombres y Apellidos">
                 </div>
 
-                
-                    <div class="col-sm-12" id="totalGeneral">
-                        
-                    </div>
-                
+                <div class="form-group">
+                    <label for="nombres">Email</label>
+                    <input type="text" name="email" class="form-control" placeholder="Email">
+                </div>
 
-                <p><a href="#" id="add" class="btn btn-sm btn-success">Agregar MAs Habitaciones y Fechas</a></p>
+                <div class="form-group">
+                    <label for="nombres">Telefono</label>
+                    <input type="text" name="telefono" class="form-control" placeholder="Telefono">
+                </div>
 
-                <br/><br/>
-                
+                <div class="form-group">
+                    <label for="nombres">Pais</label>
+                    {{ Form::select("pais", $paises, null, array('class' => 'form-control')) }}
+                    <!--<input type="text" name="pais" class="form-control" placeholder="Pais">-->
+                </div>            
 
-                <!--<div class="form-group">    
-                    
-                    <label for="">Seleccione Fechas:</label>
-                    <div id="calendar" class="box"></div>
-                    <input type="hidden" class="form-control" id="value_calendar">
-                    <br/>
-                    <div class="row">
-                        <div class="col-sm-4"><img src="{{ asset('front/css/images/enable.png') }}" width="15px" height="15px" /> Dias Disponibles.</div>
-                        <div class="col-sm-4"><img src="{{ asset('front/css/images/icon_disabled_days.png') }}" width="15px" height="15px" /> Ocupados</div>
-                        <div class="col-sm-4"><img src="{{ asset('front/css/images/ui-bg_diagonals-thick_18_b81900_40x40.png') }}" width="15px" height="15px" /> Seleccionados</div>
-                    </div>  
-            
-                 </div>-->
-                <br/>
-                 
-
-                 <div class="form-group">
+                <div class="form-group">
                     <label for="">Comentarios:</label>
                     <textarea class="form-control" rows="7"></textarea>
-                 </div>
+                </div>
 
+                <p>
+                    <label>
+                      <input type="checkbox"> <a href="#" data-toggle="modal" data-target="#myModal">Acepto los Terminos y condiciones.</a>
+                    </label>
+                </p>
 
+                <input type="submit" value="Enviar Informacion">
             
 
 
@@ -598,11 +390,24 @@ $paises = array(
 
 
 
-<br>
-
-
-
-<a href="#" id="values">Values</a>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Terminos y condiciones.</h4>
+      </div>
+      <div class="modal-body">
+        {{ $terms->terms_and_conditions}}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
