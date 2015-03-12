@@ -235,7 +235,10 @@ $paises = array(
 
 
         $("body").on("change", ".room", function(){
+            
             numId = $(this).attr("id").split('-');
+
+            
             $('#calendar-'+numId[1]).multiDatesPicker('destroy');
             $('#calendar-'+numId[1]).val("");
             instanceMultiDatePicker("calendar-"+numId[1], "room-"+numId[1]);
@@ -266,6 +269,7 @@ $paises = array(
             });
 
             getDatesPrices(arrDatesGlobal, id[1]);
+            
 
             //alert("cambio");
             //alert($(this).attr("id"));
@@ -301,7 +305,7 @@ $paises = array(
        
         loadDatesBlock(element_room);
         
-
+        
         $("#"+element_calendar).multiDatesPicker({
             showOn: "button",
             buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
@@ -342,7 +346,7 @@ $paises = array(
         $.ajax({
             type: "post",
             url: "{{ url('datesPrices') }}",
-            data: "dates="+JSON.stringify(arrDatesGlobal)+"&room="+$("#room-"+id).val()+"&num_hab="+$("#num_hab-"+id).val(),
+            data: "dates="+JSON.stringify(arrDatesGlobal)+"&room="+$("#room-"+id).val()+"&num_hab="+$("#num_hab-"+id).val()+"&hab="+$("#room-"+id+" :selected").text(),
             async: false,
             success: function(datos){
                 console.log(datos);
@@ -378,6 +382,7 @@ $paises = array(
     function loadDatesBlock(element_room)
     {
        //var arrDates = [];
+       retValDatesBlock = new Array();
         $.ajax({
             type: "post",
             url: "{{ url('datesBlocks') }}",

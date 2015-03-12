@@ -45,7 +45,24 @@
             </select> 
         </div>
 
-        <a href="#" id="add" class="btn btn-sm btn-success">Agregar Precio a un dia</a>
+        <div class="row">
+            <div class="col-lg-6">
+                <!--<a href="#" id="add" class="btn btn-sm btn-success">Agregar Precio a un dia</a>-->
+
+                Price: <input type="text" id="price_general">
+                 
+
+            </div>
+
+            <div class="col-lg-6">
+               <label for="from">From</label>
+                <input type="text" id="from" name="from">
+                <label for="to">to</label>
+                <input type="text" id="to" name="to">
+            </div>
+        </div>
+        
+        
 
         <br/>
         <br/>
@@ -112,6 +129,41 @@
 
             $('#list > tbody:last').append('<tr><td><input type="text" class="form-control calendar" name="date[]" readonly></td><td><input type="text" name="price[]" class="form-control" ></td><td><a href="#" class="btn btn-sm btn-danger delete">Eliminar</a></td></tr>');
         });
+
+
+        $( "#from" ).datepicker({
+          defaultDate: "+1w",
+          dateFormat: "yy/mm/dd",
+          changeMonth: true,
+          
+          onClose: function( selectedDate ) {
+            $( "#to" ).datepicker( "option", "minDate", selectedDate );
+          }
+        });
+        $( "#to" ).datepicker({
+          defaultDate: "+1w",
+          dateFormat: "yy/mm/dd",
+          changeMonth: true,
+          
+          onClose: function( selectedDate ) {
+            $( "#from" ).datepicker( "option", "maxDate", selectedDate );
+          },
+          onSelect: function(){
+            $.ajax({
+                type: "post",
+                url: "{{ url('range_date_price') }}",
+                data: "from="+$("#from").val()+"&to="+$("#to").val()+"&price_general="+$("#price_general").val(),
+                async: false,
+                success: function(datos){
+                    $("#from").val("");
+                    $("#to").val("");
+                    $("#price_general").val("");
+                    $('#list > tbody:last').append(datos);
+                }
+            });
+          }
+        });
+
         
     });
 

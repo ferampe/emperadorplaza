@@ -45,7 +45,17 @@
             </select> 
         </div>
 
-        <a href="#" id="add" class="btn btn-sm btn-success">Agregar Fecha para bloquear.</a>
+        <!--<a href="#" id="add" class="btn btn-sm btn-success">Agregar Fecha para bloquear.</a>-->
+        <div class="row">
+            
+            <div class="col-lg-12">
+               <label for="from">From</label>
+                <input type="text" id="from" name="from">
+                <label for="to">to</label>
+                <input type="text" id="to" name="to">
+            </div>
+        </div>
+
 
         <br/>
         <br/>
@@ -111,6 +121,40 @@
 
             $('#list > tbody:last').append('<tr><td><input type="text" class="form-control calendar" name="date[]" readonly></td><td><a href="#" class="btn btn-sm btn-danger delete">Eliminar</a></td></tr>');
         });
+
+        $( "#from" ).datepicker({
+          defaultDate: "+1w",
+          dateFormat: "yy/mm/dd",
+          changeMonth: true,
+          
+          onClose: function( selectedDate ) {
+            $( "#to" ).datepicker( "option", "minDate", selectedDate );
+          }
+        });
+        $( "#to" ).datepicker({
+          defaultDate: "+1w",
+          dateFormat: "yy/mm/dd",
+          changeMonth: true,
+          
+          onClose: function( selectedDate ) {
+            $( "#from" ).datepicker( "option", "maxDate", selectedDate );
+          },
+          onSelect: function(){
+            $.ajax({
+                type: "post",
+                url: "{{ url('range_date_block') }}",
+                data: "from="+$("#from").val()+"&to="+$("#to").val()+"&price_general="+$("#price_general").val(),
+                async: false,
+                success: function(datos){
+                    $("#from").val("");
+                    $("#to").val("");
+                    $("#price_general").val("");
+                    $('#list > tbody:last').append(datos);
+                }
+            });
+          }
+        });
+
         
     });
 

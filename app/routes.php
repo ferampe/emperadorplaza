@@ -148,9 +148,11 @@ Route::post('datesPrices', function(){
         $html .= "<tr><td>".$arrDatesSingle[2]." de ".$meses[intval($arrDatesSingle[1]) - 1]." del ".$arrDatesSingle[0]."</td><td> $".$value." </td></tr>";
     }
 
-    $suma = $sum * (int)$_POST['num_hab'];
+    $suma = $sum * (int)$_POST['num_hab'];    
 
-    $html .= "<tr><td>Sub Total:</td><td>$".$suma."<input type='hidden' class='totales' value='".$suma."'></td></tr></table></div></div>";
+    $numHabitacionesText = ($_POST['num_hab'] > 1 ? "habitaciones" : "habitacion");
+
+    $html .= "<tr><td><strong>Sub Total de reserva para ".$_POST['num_hab']." ".$numHabitacionesText." ".$_POST['hab']."</strong>:</td><td>$".$suma."<input type='hidden' class='totales' value='".$suma."'></td></tr></table></div></div>";
 
     return $html;
     //var_dump($arrResult);
@@ -186,6 +188,74 @@ Route::post('getBlockSelect', function(){
     $roomSelect .= '</select>';
 
     return $roomSelect;
+});
+
+Route::post('range_date_price', function(){
+
+    function dateRange( $first, $last, $step = '+1 day', $format = 'Y/m/d' ) {
+
+        $dates = array();
+        $current = strtotime( $first );
+        $last = strtotime( $last );
+
+        while( $current <= $last ) {
+
+            $dates[] = date( $format, $current );
+            $current = strtotime( $step, $current );
+        }
+
+        return $dates;
+    }
+
+    $datesRange = dateRange($_POST['from'], $_POST['to']);
+
+    $html = null;
+    foreach($datesRange as $dr)
+    {
+        
+        $arDate = explode("/", $dr);
+        $newDate = $arDate[2]."/".$arDate[1]."/".$arDate[0];
+
+        $html .= '<tr><td><input type="text" class="form-control calendar" name="date[]" readonly value="'.$newDate.'"></td><td><input type="text" name="price[]" class="form-control" value="'.$_POST['price_general'].'" ></td><td><a href="#" class="btn btn-sm btn-danger delete">Eliminar</a></td></tr>';
+    }
+
+    echo $html;    
+
+});
+
+
+
+Route::post('range_date_block', function(){
+
+    function dateRange( $first, $last, $step = '+1 day', $format = 'Y/m/d' ) {
+
+        $dates = array();
+        $current = strtotime( $first );
+        $last = strtotime( $last );
+
+        while( $current <= $last ) {
+
+            $dates[] = date( $format, $current );
+            $current = strtotime( $step, $current );
+        }
+
+        return $dates;
+    }
+
+    $datesRange = dateRange($_POST['from'], $_POST['to']);
+
+    $html = null;
+    foreach($datesRange as $dr)
+    {
+        
+        $arDate = explode("/", $dr);
+        $newDate = $arDate[2]."/".$arDate[1]."/".$arDate[0];
+
+        $html .= '<tr><td><input type="text" class="form-control calendar" name="date[]" readonly value="'.$newDate.'"></td><td><a href="#" class="btn btn-sm btn-danger delete">Eliminar</a></td></tr>';
+    }
+
+    echo $html;    
+
 });
 
 
